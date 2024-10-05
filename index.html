@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Library Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        nav ul {
+            display: flex;
+            list-style-type: none;
+        }
+        nav ul li {
+            margin-left: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+        }
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .text-content {
+            flex: 1;
+            padding-right: 50px;
+        }
+        h1 {
+            font-size: 48px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+        }
+        .button {
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .primary-button {
+            background-color: #4285f4;
+            color: white;
+        }
+        .primary-button:hover {
+            background-color: #3367d6;
+        }
+        .secondary-button {
+            background-color: transparent;
+            color: #4285f4;
+            border: 2px solid #4285f4;
+        }
+        .secondary-button:hover {
+            background-color: #4285f4;
+            color: white;
+        }
+        .image-placeholder {
+            flex: 1;
+            height: 400px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .text-content {
+                padding-right: 0;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .cta-buttons {
+                justify-content: center;
+            }
+            .image-placeholder {
+                width: 100%;
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Anurved</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="books.html">BOOKS</a></li>
+                    <li><a href="voice.html">AUDIO PRODUCTS</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="main-content">
+            <div class="text-content">
+                <h1>E-Library</h1>
+                <p>An inclusive eLibrary providing accessible resources for both disabled and non-disabled individuals to enjoy seamless learning and reading.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="button primary-button" onclick="handleReadingModeChange('normal')">Explore books</a>
+                    <a href="voice.html" class="button secondary-button">Try saying 'speech'</a>
+                </div>
+            </div>
+            <div class="image-placeholder" style="position: relative;">
+                <img src="library.png" alt="img" 
+                style=" position: absolute;
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+                object-position: center;">
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        startVoiceRecognition();
+    });
+
+        function handleReadingModeChange(mode) {
+            if (mode === "voice") {
+                window.location.href = "voice.html";
+            } else if (mode === "normal") {
+                window.location.href = "books.html";
+            }
+        }
+
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const command = event.results[0][0].transcript.toLowerCase();
+                console.log('Voice command received: ', command);
+                handleVoiceCommand(command);
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error: ', event.error);
+            };
+        }
+
+        function handleVoiceCommand(command) {
+            if (command.includes("speech")) {
+                window.location.href = "voice.html";
+            } else if (command.includes("books")) {
+                window.location.href = "books.html";
+            } else if (command.includes("home")) {
+            window.location.href = "index.html"; // Redirect to home
+        }
+        }
+    </script>
+</body>
+</html>
