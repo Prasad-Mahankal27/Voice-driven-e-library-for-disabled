@@ -184,66 +184,69 @@
 </div>
 
 <script>
-    // Start voice recognition automatically when the page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        startVoiceRecognition();
-    });
+   // Start voice recognition automatically when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startVoiceRecognition();
+});
 
-    function startVoiceRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
+function startVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+        const command = event.results[0][0].transcript.toLowerCase();
+        console.log('Voice command received: ', command);
+        handleVoiceCommand(command);
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error: ', event.error);
+    };
+
+    // Restart recognition after it ends to keep it always on
+    recognition.onend = function() {
+        recognition.start(); // Keeps the recognition running
+    };
+}
+
+function handleVoiceCommand(command) {
+    const availableBooks = [
+        "philosopher", "chamber", "prisoner", "goblet", "phoenix", "prince", "hallows"
+    ];
+    
+    if (command.includes("stop")) {
+        stopAllAudio();
+    } else if (command.includes("home")) {
+        window.location.href = "index.html"; // Redirect to home
+    } else {
+        const requestedBook = availableBooks.find(book => command.includes(book));
         
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.start();
-
-        recognition.onresult = function(event) {
-            const command = event.results[0][0].transcript.toLowerCase();
-            console.log('Voice command received: ', command);
-            handleVoiceCommand(command);
-        };
-
-        recognition.onerror = function(event) {
-            console.error('Speech recognition error: ', event.error);
-        };
-
-        // Restart recognition after it ends to keep it always on
-        recognition.onend = function() {
-            recognition.start(); // Keeps the recognition running
-        };
-    }
-
-    function handleVoiceCommand(command) {
-               if (command.includes("philosopher")) {
-            document.getElementById('philosopher-audio').play();
-        } else if (command.includes("chamber")) {
-            document.getElementById('chamber-audio').play();
-        } else if (command.includes("prisoner")) {
-            document.getElementById('prisoner-audio').play();
-        } else if (command.includes("goblet")) {
-            document.getElementById('goblet-audio').play();
-        } else if (command.includes("phoenix")) {
-            document.getElementById('phoenix-audio').play();
-        } else if (command.includes("prince")) {
-            document.getElementById('prince-audio').play();
-        } else if (command.includes("hallows")) {
-            document.getElementById('hallows-audio').play();
-        } else if (command.includes("stop")) {
-            stopAllAudio();
-        } else if (command.includes("home")) {
-            window.location.href = "index.html"; // Redirect to home
+        if (requestedBook) {
+            document.getElementById(`${requestedBook}-audio`).play();
+        } else {
+            speakMessage("Sorry, book not available");
         }
     }
+}
 
-    function stopAllAudio() {
-        const audios = document.querySelectorAll('audio');
-        audios.forEach(audio => {
-            audio.pause();
-            audio.currentTime = 0; // Optionally reset the audio to the start
-        });
-    }
+function stopAllAudio() {
+    const audios = document.querySelectorAll('audio');
+    audios.forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0; // Optionally reset the audio to the start
+    });
+}
+
+function speakMessage(message) {
+    const speech = new SpeechSynthesisUtterance(message);
+    window.speechSynthesis.speak(speech);
+}
 </script>
 
 </body>
